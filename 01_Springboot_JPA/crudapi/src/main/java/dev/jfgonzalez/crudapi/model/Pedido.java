@@ -11,13 +11,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Entity 
-@Getter @Setter @ToString @AllArgsConstructor 
+@Getter @Setter @ToString @NoArgsConstructor  
 public class Pedido {
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +30,7 @@ public class Pedido {
     @Column(nullable = false)
     private EstadoPedido estado = EstadoPedido.RECIBIDO;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(
         name = "direccion_id",
@@ -37,6 +38,7 @@ public class Pedido {
     )
     private Direccion direccion;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(
         name = "pedido_id",

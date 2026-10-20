@@ -11,13 +11,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Getter @Setter @ToString @AllArgsConstructor 
+@Getter @Setter @ToString @NoArgsConstructor 
 public class Direccion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +35,7 @@ public class Direccion {
     @Column(nullable = false)
     private String codigoPostal;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(
         name = "cliente_id",
@@ -42,6 +43,7 @@ public class Direccion {
     )
     private Cliente cliente;
 
+    @ToString.Exclude
     @OneToMany(
         mappedBy = "direccion",
         fetch = FetchType.EAGER
@@ -51,5 +53,10 @@ public class Direccion {
     public void addPedido(Pedido pedido) {
         pedidos.add(pedido);
         pedido.setDireccion(this);
+    }
+
+    public void removePedido(Pedido pedido) {
+        pedidos.remove(pedido);
+        pedido.setDireccion(null);
     }
 }

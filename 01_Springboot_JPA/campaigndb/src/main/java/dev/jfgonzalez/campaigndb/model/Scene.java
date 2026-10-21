@@ -27,27 +27,27 @@ import lombok.ToString;
 
 @NoArgsConstructor @Getter @Setter @ToString @EqualsAndHashCode(onlyExplicitlyIncluded = true) 
 @Entity 
-@Table (name = "scene")
+@Table(name = "scene")
 public class Scene {
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue (strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column (nullable = false)
+    @Column(nullable = false)
     private String name;
 
-    @JdbcTypeCode (SqlTypes.JSON)
-    @Column (columnDefinition = "json", nullable = false)
-    private Map<String, Object> data;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "json", nullable = false)
+    private Map<String, Object> properties;
 
     @ToString.Exclude
-    @ManyToOne (fetch = FetchType.LAZY, optional = false)
-    @JoinColumn (name = "campaign_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "campaign_id", nullable = false)
     private Campaign campaign;
 
     @ToString.Exclude
-    @OneToMany (
+    @OneToMany(
         mappedBy = "scene",
         fetch = FetchType.LAZY,
         cascade = CascadeType.ALL,
@@ -55,13 +55,15 @@ public class Scene {
     )
     private List<SceneResource> sceneResources = new ArrayList<>();
 
-    public SceneResource addResource(Resource resource, float posX, float posY, boolean isHidden) {
+    public SceneResource addResource(Resource resource, Float posX, Float posY, boolean isHidden, Map<String, Object> properties, GameCharacter gameCharacter) {
         SceneResource sceneResource = new SceneResource();
         sceneResource.setScene(this);
         sceneResource.setResource(resource);
         sceneResource.setPosX(posX);
         sceneResource.setPosY(posY);
         sceneResource.setHidden(isHidden);
+        sceneResource.setProperties(properties);
+        sceneResource.setGameCharacter(gameCharacter);
 
         this.sceneResources.add(sceneResource);
         return sceneResource;
@@ -71,7 +73,7 @@ public class Scene {
         if (this.sceneResources.remove(sceneResource)) {
             sceneResource.setScene(null);
             sceneResource.setResource(null);
+            sceneResource.setGameCharacter(null);
         }
     }
-    
 }

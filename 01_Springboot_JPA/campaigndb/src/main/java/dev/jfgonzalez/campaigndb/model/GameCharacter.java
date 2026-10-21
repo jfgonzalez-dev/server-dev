@@ -1,10 +1,8 @@
 package dev.jfgonzalez.campaigndb.model;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import org.hibernate.annotations.JdbcTypeCode;
@@ -18,8 +16,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -41,68 +37,85 @@ public class GameCharacter {
     @Column(nullable = false)
     private String name;
 
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String background;
+
+    @Column(name = "avatar_url", nullable = false)
+    private String avatarUrl;
+
+    @Column(name = "is_pc", nullable = false)
+    private boolean isPc = true;
+
+    @Column(nullable = false)
+    private int level = 1;
+
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(nullable = false, columnDefinition = "json")
-    private Map<String, Object> data;
+    private Map<String, Object> properties;
 
     @ToString.Exclude
-    @ManyToOne (fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(
-        name = "player_id",
-        nullable = true
-    )
-    private Player player;
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "owner_id", nullable = true)
+    private Player owner;
 
     @ToString.Exclude
-    @ManyToOne (fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(
-        name = "campaign_id",
-        nullable = true
-    )
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "campaign_id", nullable = true)
     private Campaign campaign;
 
     @ToString.Exclude
-    @ManyToMany (fetch = FetchType.LAZY)
-    @JoinTable (
-        name = "game_character_skill",
-        joinColumns = @JoinColumn (name = "game_character_id"),
-        inverseJoinColumns = @JoinColumn (name = "skill_id")
-    )
-    private Set<Skill> skills = new HashSet<>();
-
-    public void addSkill(Skill skill) {
-        skills.add(skill);
-        skill.getGameCharacters().add(this);
-    }
-
-    public void removeSkill(Skill skill) {
-        skills.remove(skill);
-        skill.getGameCharacters().remove(this);
-    }
-
-    @ToString.Exclude
-    @OneToMany (
+    @OneToMany(
         mappedBy = "gameCharacter",
         fetch = FetchType.LAZY,
         cascade = CascadeType.ALL,
         orphanRemoval = true
     )
-    private List<Inventory> inventory = new ArrayList<>();
+    private List<GameCharacterFeature> features = new ArrayList<>();
 
-    public Inventory addItem(Item item, int quantity, boolean isEquipped, Map<String, Object> data) {
-        Inventory inventoryItem = new Inventory();
-        inventoryItem.setGameCharacter(this);
-        inventoryItem.setItem(item);
-        inventoryItem.setQuantity(quantity);
-        inventoryItem.setEquipped(isEquipped);
-        inventoryItem.setData(data);
+    public GameCharacterFeature addFeature(Feature feature, Map<String, Object> properties) {
+        GameCharacterFeature characterFeature = new GameCharacterFeature();
+        characterFeature.setGameCharacter(this);
+        characterFeature.setFeature(feature);
+        characterFeature.setProperties(properties);
 
-        this.inventory.add(inventoryItem);
-        return inventoryItem;
+        this.features.add(characterFeature);
+        return characterFeature;
+    }
+
+    public void removeFeature(Feature feature) {
+        this.features.removeIf(cf -> {
+            boolean match = cf.getFeature().equals(feature);
+            if (match) {
+                cf.setGameCharacter(null);
+                cf.setFeature(null);
+            }
+            return match;
+        });
+    }
+
+    @ToString.Exclude
+    @OneToMany(
+        mappedBy = "gameCharacter",
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<GameCharacterItem> items = new ArrayList<>();
+
+    public GameCharacterItem addItem(Item item, int quantity, boolean isEquipped, Map<String, Object> properties) {
+        GameCharacterItem characterItem = new GameCharacterItem();
+        characterItem.setGameCharacter(this);
+        characterItem.setItem(item);
+        characterItem.setQuantity(quantity);
+        characterItem.setEquipped(isEquipped);
+        characterItem.setProperties(properties);
+
+        this.items.add(characterItem);
+        return characterItem;
     }
 
     public void removeItem(Item item) {
-        this.inventory.removeIf(i -> {
+        this.items.removeIf(i -> {
             boolean match = i.getItem().equals(item);
             if (match) {
                 i.setGameCharacter(null);
@@ -111,5 +124,4 @@ public class GameCharacter {
             return match;
         });
     }
-
 }

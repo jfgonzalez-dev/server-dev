@@ -30,10 +30,10 @@ public class Player {
     @Column (nullable = false)
     private String name;
     
-    @Column (nullable = false)
+    @Column (nullable = false, unique = true)
     private String email;
 
-    @Column (nullable = false)
+    @Column (nullable = false, name = "is_admin")
     private boolean isAdmin;
 
     @ToString.Exclude
@@ -55,19 +55,19 @@ public class Player {
     
     @ToString.Exclude
     @OneToMany (
-        mappedBy = "player",
+        mappedBy = "owner",
         fetch = FetchType.LAZY
     )
     private List<GameCharacter> gameCharacters = new ArrayList<>();
 
     public void addGameCharacter(GameCharacter gameCharacter) {
         gameCharacters.add(gameCharacter);
-        gameCharacter.setPlayer(this);
+        gameCharacter.setOwner(this);
     }
 
     public void removeGameCharacter(GameCharacter gameCharacter) {
         gameCharacters.remove(gameCharacter);
-        gameCharacter.setPlayer(null);
+        gameCharacter.setOwner(null);
     }
 
     @ToString.Exclude

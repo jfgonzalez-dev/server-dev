@@ -35,7 +35,7 @@ public class WikiArticle {
 
     @JdbcTypeCode (SqlTypes.JSON)
     @Column (nullable = false, columnDefinition = "json")
-    private Map<String, Object> data;
+    private Map<String, Object> properties;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = true)

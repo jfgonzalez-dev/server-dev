@@ -15,6 +15,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -36,10 +37,15 @@ public class Session {
 
     @JdbcTypeCode (SqlTypes.JSON)
     @Column (columnDefinition = "json", nullable = false)
-    private Map<String, Object> data;
+    private Map<String, Object> properties;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn (name = "campaign_id", nullable = false)
     private Campaign campaign;
+
+    @ToString.Exclude
+    @OneToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "summary_article_id", unique = true, nullable = true)
+    private WikiArticle summaryArticle;
 }

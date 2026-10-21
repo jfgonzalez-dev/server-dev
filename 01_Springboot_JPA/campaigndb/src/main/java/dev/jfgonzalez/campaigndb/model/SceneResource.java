@@ -1,6 +1,10 @@
 package dev.jfgonzalez.campaigndb.model;
 
+import java.util.Map;
 import java.util.UUID;
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,30 +23,38 @@ import lombok.ToString;
 
 @NoArgsConstructor @Getter @Setter @ToString @EqualsAndHashCode(onlyExplicitlyIncluded = true) 
 @Entity 
-@Table (name = "scene_resource")
+@Table(name = "scene_resource")
 public class SceneResource {
     @Id 
     @EqualsAndHashCode.Include
-    @GeneratedValue (strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ToString.Exclude
-    @ManyToOne (fetch = FetchType.LAZY, optional = false)
-    @JoinColumn (name = "scene_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "scene_id", nullable = false)
     private Scene scene;
     
     @ToString.Exclude
-    @ManyToOne (fetch = FetchType.LAZY, optional = false)
-    @JoinColumn (name = "resource_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "resource_id", nullable = false)
     private Resource resource;
 
-    @Column (nullable = false)
-    private float posX;
+    @Column(name = "pos_x", nullable = true)
+    private Float posX;
 
-    @Column (nullable = false)
-    private float posY;
+    @Column(name = "pos_y", nullable = true)
+    private Float posY;
 
-    @Column (nullable = false)
-    private boolean isHidden;
-    
+    @Column(name = "is_hidden", nullable = false)
+    private boolean isHidden = false;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "json", nullable = false)
+    private Map<String, Object> properties;
+
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "game_character_id", nullable = true)
+    private GameCharacter gameCharacter;
 }

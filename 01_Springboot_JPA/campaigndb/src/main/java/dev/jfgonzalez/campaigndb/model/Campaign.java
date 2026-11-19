@@ -44,7 +44,7 @@ public class Campaign {
     private String gameSystem;
 
     @Column(nullable = false)
-    private String status = "ACTIVE";
+    private String status = "WIP";
 
     @Column(name = "seconds_played", nullable = false)
     private int secondsPlayed;

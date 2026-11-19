@@ -44,7 +44,7 @@ public class GameCharacter {
     private String avatarUrl;
 
     @Column(name = "is_pc", nullable = false)
-    private boolean isPc = true;
+    private boolean pc = true;
 
     @Column(nullable = false)
     private int level = 1;

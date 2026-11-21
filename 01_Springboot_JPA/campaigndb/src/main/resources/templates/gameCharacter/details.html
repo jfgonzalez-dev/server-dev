@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-B/GM4XqrwHnWXNOWMbloTmrYXZg10cakYGmpfsR/bbzQ6JAJI4ihuyADKLnBgrCe" crossorigin="anonymous">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-1a/pXj49ZQ1aHEmrJ+gMw1otqoVsYwlEnlD8mIfY2TV03r20Y0CN7uqx1tQogjPL" crossorigin="anonymous"></script>
+    <title th:text="${campaign.name}"></title>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <main class="container mt-4">
+        <section id="campaign" th:object="${campaign}">
+            <h1 th:text="*{name}">Nombre</h1>
+            <p th:text="*{description}"></p>
+            <p><strong>ID:</strong> <span th:text="*{id}"></span></p>
+            <p><strong>Sistema:</strong> <span th:text="*{gameSystem}"></span></p>
+            <p><strong>Tiempo de juego:</strong> <span th:text="*{secondsPlayed}"></span> s</p>
+            <p><strong>Estado:</strong> <span th:text="*{status}"></span></p>
+            <p><strong>Propietario:</strong> <span th:text="*{owner.name}"></span></p>
+            <div class="mt-3">
+                <a th:href="@{/campaign}" class="btn btn-text theme-info">
+                    <th:block th:replace="~{fragments/icons :: back}"></th:block>
+                </a>
+                <a th:href="@{/campaign/{id}/edit(id=*{id})}" class="btn btn-text theme-warning">
+                    <th:block th:replace="~{fragments/icons :: edit}"></th:block>
+                    <span class="ms-1">Editar</span>
+                </a>
+                <a th:href="@{/campaign/{id}/delete(id=*{id})}" class="btn btn-text theme-danger" onclick="return confirm('¿Eliminar esta campaña?')">
+                    <th:block th:replace="~{fragments/icons :: delete}">
+                    </th:block><span class="ms-1">Eliminar</span>
+                </a>
+            </div>
+        </section>
+        <section id="characters" class="mt-5">
+            <h2>Personajes</h2>
+            <a class="btn btn-primary mb-3" th:href="@{/gameCharacter/new(campaignId=${campaign.id})}">Nuevo personaje</a>
+            <p class="mt-3" th:if="${#lists.isEmpty(gameCharacters)}">No existen personajes asignados a esta campaña.</p>
+            <table class="table table-striped" th:unless="${#lists.isEmpty(gameCharacters)}">
+                <thead>
+                    <tr>
+                        <th>Avatar</th>
+                        <th>Nombre</th>
+                        <th>Trasfondo</th>
+                        <th>Nivel</th>
+                        <th>Tipo</th>
+                        <th>Propietario</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="gc : ${gameCharacters}">
+                        <td><th:block th:replace="~{fragments/avatar :: avatar(${gc.avatarUrl}, ${gc.name}, 40)}"></th:block></td>
+                        <td><a class="theme-inverse underline-offset-2 underline-20 hover:underline-100" th:text="${gc.name}" th:href="@{/gameCharacter/{id}/details(id=${gc.id})}"></a></td>
+                        <td th:text="${gc.background}"></td>
+                        <td th:text="${gc.level}"></td>
+                        <td th:text="${gc.pc ? 'PJ' : 'PNJ'}"></td>
+                        <td th:text="${gc.owner != null ? gc.owner.name : 'Huérfano'}"></td>
+                        <td>
+                            <div class="d-flex flex-nowrap align-items-center gap-1">
+                                <a th:href="@{/gameCharacter/{id}/deassignCampaign(id=${gc.id})}" class="btn btn-text theme-accent" title="Desasignar"><th:block th:replace="~{fragments/icons :: deassign}"></th:block></a>
+                                <a th:href="@{/gameCharacter/{id}/edit(id=${gc.id})}" class="btn btn-text theme-warning" title="Editar"><th:block th:replace="~{fragments/icons :: edit}"></th:block></a>
+                                <a th:href="@{/gameCharacter/{id}/delete(id=${gc.id})}" class="btn btn-text theme-danger" title="Eliminar" onclick="return confirm('¿Eliminar este personaje?')"><th:block th:replace="~{fragments/icons :: delete}"></th:block></a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+</body>
+</html>

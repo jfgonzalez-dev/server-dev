@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-B/GM4XqrwHnWXNOWMbloTmrYXZg10cakYGmpfsR/bbzQ6JAJI4ihuyADKLnBgrCe" crossorigin="anonymous">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-1a/pXj49ZQ1aHEmrJ+gMw1otqoVsYwlEnlD8mIfY2TV03r20Y0CN7uqx1tQogjPL" crossorigin="anonymous"></script>
+    <title>Personajes</title>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <main class="container mt-4">
+        <div class="d-flex justify-content-between m-5">
+            <h1>Personajes</h1>
+            <a class="btn btn-solid theme-success" th:href="@{/gameCharacter/new}">Nuevo personaje</a>
+        </div>
+        <p class="mt-3" th:if="${gameCharacters.empty}">No existen personajes.</p>
+        <table class="table table-striped" th:unless="${gameCharacters.empty}">
+            <thead>
+                <tr>
+                    <th>Avatar</th>
+                    <th>Nombre</th>
+                    <th>Trasfondo</th>
+                    <th>Nivel</th>
+                    <th>Tipo</th>
+                    <th>Propietario</th>
+                    <th>Campaña</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="gc : ${gameCharacters}">
+                    <td><th:block th:replace="~{fragments/avatar :: avatar(${gc.avatarUrl}, ${gc.name}, 40)}"></th:block></td>
+                    <td><a class="theme-inverse underline-offset-2 underline-20 hover:underline-100" th:text="${gc.name}" th:href="@{/gameCharacter/{id}/details(id=${gc.id})}"></a></td>
+                    <td th:text="${gc.background}"></td>
+                    <td th:text="${gc.level}"></td>
+                    <td th:text="${gc.pc ? 'PJ' : 'PNJ'}"></td>
+                    <td th:text="${gc.owner != null ? gc.owner.name : 'Huérfano'}"></td>
+                    <td th:text="${gc.campaign != null ? gc.campaign.name : '-'}"></td>
+                    <td>
+                        <div class="d-flex flex-nowrap align-items-center gap-1 justify-content-end">
+                            <a th:if="${gc.campaign != null}"
+                                th:href="@{/gameCharacter/{id}/deassignCampaign(id=${gc.id})}"
+                                class="btn btn-text theme-accent" title="Desasignar campaña">
+                                <th:block th:replace="~{fragments/icons :: deassign}"></th:block>
+                            </a>
+                            <a th:href="@{/gameCharacter/{id}/edit(id=${gc.id})}"
+                                class="btn btn-text theme-warning" title="Editar">
+                                <th:block th:replace="~{fragments/icons :: edit}"></th:block>
+                            </a>
+                            <a th:href="@{/gameCharacter/{id}/delete(id=${gc.id}, pageNumber=${gameCharacters.number}, pageSize=${gameCharacters.size})}"
+                                class="btn btn-text theme-danger" title="Eliminar"
+                                onclick="return confirm('¿Eliminar este personaje?')">
+                                <th:block th:replace="~{fragments/icons :: delete}"></th:block>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <nav th:if="${gameCharacters.totalPages > 0}">
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${gameCharacters.first} ? 'disabled'">
+                    <a class="page-link" th:href="@{/gameCharacter(pageNumber=${gameCharacters.number - 1}, pageSize=${gameCharacters.size})}">
+                        <th:block th:replace="~{fragments/icons :: back}"></th:block>
+                    </a>
+                </li>
+                <li class="page-item disabled"><span class="page-link" th:text="${gameCharacters.number + 1}"></span></li>
+                <li class="page-item" th:classappend="${gameCharacters.last} ? 'disabled'">
+                    <a class="page-link" th:href="@{/gameCharacter(pageNumber=${gameCharacters.number + 1}, pageSize=${gameCharacters.size})}">
+                        <th:block th:replace="~{fragments/icons :: forward}"></th:block>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </main>
+</body>
+</html>

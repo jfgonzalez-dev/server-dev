@@ -50,7 +50,7 @@
                 </thead>
                 <tbody>
                     <tr th:each="gc : ${gameCharacters}">
-                        <td><img th:src="${gc.avatarUrl}" th:alt="${gc.name}" style="width: 40px; height: 40px; object-fit: cover;"></td>
+                        <td><th:block th:replace="~{fragments/avatar :: avatar(${gc.avatarUrl}, ${gc.name}, 40)}"></th:block></td>
                         <td><a class="theme-inverse underline-offset-2 underline-20 hover:underline-100" th:text="${gc.name}" th:href="@{/gameCharacter/{id}/details(id=${gc.id})}"></a></td>
                         <td th:text="${gc.background}"></td>
                         <td th:text="${gc.level}"></td>
@@ -58,7 +58,7 @@
                         <td th:text="${gc.owner != null ? gc.owner.name : 'Huérfano'}"></td>
                         <td>
                             <div class="d-flex flex-nowrap align-items-center gap-1">
-                                <a th:href="@{/gameCharacter/{id}/deassign(id=${gc.id})}" class="btn btn-text theme-accent" title="Desasignar"><th:block th:replace="~{fragments/icons :: deassign}"></th:block></a>
+                                <a th:href="@{/gameCharacter/{id}/deassignCampaign(id=${gc.id})}" class="btn btn-text theme-accent" title="Desasignar"><th:block th:replace="~{fragments/icons :: deassign}"></th:block></a>
                                 <a th:href="@{/gameCharacter/{id}/edit(id=${gc.id})}" class="btn btn-text theme-warning" title="Editar"><th:block th:replace="~{fragments/icons :: edit}"></th:block></a>
                                 <a th:href="@{/gameCharacter/{id}/delete(id=${gc.id})}" class="btn btn-text theme-danger" title="Eliminar" onclick="return confirm('¿Eliminar este personaje?')"><th:block th:replace="~{fragments/icons :: delete}"></th:block></a>
                             </div>

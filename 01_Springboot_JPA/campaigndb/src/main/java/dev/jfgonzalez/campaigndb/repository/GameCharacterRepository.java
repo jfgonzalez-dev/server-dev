@@ -22,6 +22,7 @@ public interface GameCharacterRepository extends JpaRepository<GameCharacter, UU
     List<GameCharacter> findByCampaignId(UUID campaignId);
     List<GameCharacter> findByCampaignIdAndPcTrue(UUID campaignId);
     List<GameCharacter> findByCampaignIdOrderByPcDesc(UUID campaignId);
+    List<GameCharacter> findByCampaignIsNull();
     @Query("""
         select gc from GameCharacter gc
         where gc.campaign.id = :campaignId

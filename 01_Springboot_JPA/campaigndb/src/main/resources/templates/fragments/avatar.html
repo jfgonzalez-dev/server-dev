@@ -1,0 +1,12 @@
+<th:block th:fragment="avatar(url, alt, size)">
+    <img th:if="${!#strings.isEmpty(url)}"
+         th:src="${url}" th:alt="${alt}"
+         class="rounded-circle"
+         th:style="|width: ${size}px; height: ${size}px; object-fit: cover;|">
+
+    <span th:if="${#strings.isEmpty(url)}"
+          class="d-inline-flex align-items-center justify-content-center rounded-circle bg-secondary-subtle text-secondary"
+          th:style="|width: ${size}px; height: ${size}px; font-size: ${size / 2}px;|">
+        <th:block th:replace="~{fragments/icons :: defaultAvatar}"></th:block>
+    </span>
+</th:block>

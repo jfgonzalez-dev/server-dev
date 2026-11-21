@@ -43,7 +43,7 @@ public class CampaignController {
     
     @SuppressWarnings("java:S1075")
     private static final String CAMPAIGN_PATH = "redirect:/campaign";
-    private static final String CAMPAIGN_ATTR = "campaign";
+    static final String CAMPAIGN_ATTR = "campaign";
     
     private final CampaignRepository campaignRepository;
     private final PlayerRepository playerRepository;
@@ -169,6 +169,8 @@ public class CampaignController {
         model.addAttribute(CAMPAIGN_ATTR, campaign);
         List<GameCharacter> gameCharacters = gameCharacterRepository.findByCampaignId(id);
         model.addAttribute("gameCharacters", gameCharacters);
+        List<GameCharacter> gameCharactersWithoutCampaign = gameCharacterRepository.findByCampaignIsNull();
+        model.addAttribute("gameCharacterWithoutCampaign", gameCharactersWithoutCampaign);
         return "campaign/details";
     }    
 }

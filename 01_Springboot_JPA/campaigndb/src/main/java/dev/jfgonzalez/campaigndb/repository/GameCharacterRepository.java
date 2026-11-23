@@ -2,6 +2,8 @@ package dev.jfgonzalez.campaigndb.repository;
 
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,6 +21,8 @@ public interface GameCharacterRepository extends JpaRepository<GameCharacter, UU
     List<GameCharacter> deleteByPcFalseAndCampaignId(UUID campaignId);
     @Transactional
     List<GameCharacter> deleteByPcFalseAndCampaignIsNull();
+    Page<GameCharacter> findByNameContainsIgnoreCase(String name, Pageable pageable);
+
     List<GameCharacter> findByCampaignId(UUID campaignId);
     List<GameCharacter> findByCampaignIdAndPcTrue(UUID campaignId);
     List<GameCharacter> findByCampaignIdOrderByPcDesc(UUID campaignId);

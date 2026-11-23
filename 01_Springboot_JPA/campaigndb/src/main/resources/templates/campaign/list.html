@@ -20,7 +20,7 @@
                     <th>Estado</th>
                     <th>Tiempo de campaña</th>
                     <th>Propietario</th>
-                    <th>Acciones</th>
+                    <th class="text-end">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,7 +31,7 @@
                     <td th:text="${c.secondsPlayed}"></td>
                     <td th:text="${c.owner.name}"></td>
                     <td>
-                        <div class="d-flex flex-nowrap align-items-center gap-1">
+                        <div class="d-flex flex-nowrap align-items-center gap-1 justify-content-end">
                             <a th:href="@{/campaign/{id}/edit(id=${c.id})}" class="btn btn-text theme-warning" title="Editar">
                                 <th:block th:replace="~{fragments/icons :: edit}"></th:block>
                             </a>

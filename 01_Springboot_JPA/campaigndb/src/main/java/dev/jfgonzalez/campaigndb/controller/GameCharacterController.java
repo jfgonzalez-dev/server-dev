@@ -35,7 +35,8 @@ public class GameCharacterController {
     private static final String CAMPAIGNS_ATTR = "campaigns";
 
     @SuppressWarnings("java:S1075")
-    private static final String GAME_CHARACTER_PATH = "redirect:/gameCharacter";
+    private static final String GAME_CHARACTER_PATH = "redirect:/" + GAME_CHARACTER_ATTR;
+    private static final String CAMPAIGN_PATH = "redirect:/" + CampaignController.CAMPAIGN_ATTR;
     private static final String DETAILS_PATH = "/details";
 
     private final GameCharacterRepository gameCharacterRepository;
@@ -140,9 +141,18 @@ public class GameCharacterController {
         @PathVariable UUID id,
         @RequestParam(defaultValue = "0") int pageNumber,
         @RequestParam(defaultValue = "10") int pageSize,
+        @RequestParam(defaultValue = "gameCharacter") String redirectTo,
         RedirectAttributes redirectAttributes
     ) {
-        gameCharacterRepository.deleteById(id);
+        GameCharacter gameCharacter = gameCharacterRepository.findById(id).orElseThrow();
+        UUID campaignId = gameCharacter.getCampaign() != null ? gameCharacter.getCampaign().getId() : null;
+        
+        gameCharacterRepository.delete(gameCharacter);
+
+        if ("campaign".equals(redirectTo) && campaignId != null) {
+            return CAMPAIGN_PATH + "/" + campaignId + DETAILS_PATH;
+        }
+
         redirectAttributes.addAttribute("pageNumber", pageNumber);
         redirectAttributes.addAttribute("pageSize", pageSize);
         return GAME_CHARACTER_PATH;
@@ -152,8 +162,6 @@ public class GameCharacterController {
     public String detailsGameCharacter(@PathVariable UUID id, Model model) {
         GameCharacter gameCharacter = gameCharacterRepository.findById(id).orElseThrow();
         model.addAttribute(GAME_CHARACTER_ATTR, gameCharacter);
-        List<Campaign> campaigns = campaignRepository.findAll();
-        model.addAttribute(CAMPAIGNS_ATTR, campaigns);
         return "gameCharacter/details";
     }
 
@@ -170,7 +178,7 @@ public class GameCharacterController {
             gameCharacterRepository.save(gameCharacter);
         }
         if (redirectTo.equals(GAME_CHARACTER_ATTR)) return GAME_CHARACTER_PATH + "/" + id + DETAILS_PATH;
-        return campaignId != null ? "redirect:/campaign/" + campaignId + DETAILS_PATH : GAME_CHARACTER_PATH;
+        return campaignId != null ? CAMPAIGN_PATH + "/" + campaignId + DETAILS_PATH : GAME_CHARACTER_PATH;
     }
     
     @PostMapping("/assignCampaign")
@@ -184,7 +192,7 @@ public class GameCharacterController {
         gameCharacter.setCampaign(campaign);
         gameCharacterRepository.save(gameCharacter);
         if (redirectTo.equals(GAME_CHARACTER_ATTR)) return GAME_CHARACTER_PATH + "/" + gameCharacterId + DETAILS_PATH;
-        return "redirect:/campaign/" + campaignId + DETAILS_PATH;
+        return CAMPAIGN_PATH + "/" + campaignId + DETAILS_PATH;
     }
     
     

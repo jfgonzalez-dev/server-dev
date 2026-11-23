@@ -15,8 +15,16 @@
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/gameCharacter}">Personajes</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/search}">Búsqueda avanzada</a>
+                    </li>
                 </ul>
             </div>
         </dialog>
+        <form class="input-group flex-nowrap w-auto">
+            <input class="form-control" type="search"
+                   placeholder="Buscar" aria-label="Buscar">
+            <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+        </form>
     </div>
 </nav>

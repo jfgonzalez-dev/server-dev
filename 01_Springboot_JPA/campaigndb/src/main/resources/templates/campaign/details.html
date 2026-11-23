@@ -34,7 +34,25 @@
         </section>
         <section id="characters" class="mt-5">
             <h2>Personajes</h2>
-            <a class="btn btn-primary mb-3" th:href="@{/gameCharacter/new(campaignId=${campaign.id})}">Nuevo personaje</a>
+            <div class="d-flex flex-wrap align-items-stretch gap-2 mb-3">
+                <a class="btn btn-solid theme-success d-inline-flex align-items-center" 
+                th:href="@{/gameCharacter/new(campaignId=${campaign.id})}">
+                    Crear personaje
+                </a>
+                <div class="vr"></div>
+                <span th:if="${#lists.isEmpty(gameCharacterWithoutCampaign)}" class="d-inline-flex align-items-center text-body-secondary fst-italic">No hay personajes sin campaña.</span>
+                <div th:unless="${#lists.isEmpty(gameCharacterWithoutCampaign)}">
+                    <form th:action="@{/gameCharacter/assignCampaign}" method="post"
+                        class="d-flex align-items-stretch gap-2">
+                        <input type="hidden" name="campaignId" th:value="${campaign.id}">
+                        <select name="gameCharacterId" class="form-select rounded-3" aria-label="Personaje sin campaña" required>
+                            <option value="" disabled selected>Seleccionar personaje libre...</option>
+                            <option th:each="gc : ${gameCharacterWithoutCampaign}" th:value="${gc.id}" th:text="${gc.name}"></option>
+                        </select>
+                        <button type="submit" class="btn btn-solid theme-accent">Asignar</button>
+                    </form>
+                </div>
+            </div>
             <p class="mt-3" th:if="${#lists.isEmpty(gameCharacters)}">No existen personajes asignados a esta campaña.</p>
             <table class="table table-striped" th:unless="${#lists.isEmpty(gameCharacters)}">
                 <thead>
@@ -45,7 +63,7 @@
                         <th>Nivel</th>
                         <th>Tipo</th>
                         <th>Propietario</th>
-                        <th>Acciones</th>
+                        <th class="text-end">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -57,10 +75,10 @@
                         <td th:text="${gc.pc ? 'PJ' : 'PNJ'}"></td>
                         <td th:text="${gc.owner != null ? gc.owner.name : 'Huérfano'}"></td>
                         <td>
-                            <div class="d-flex flex-nowrap align-items-center gap-1">
+                            <div class="d-flex flex-nowrap align-items-center gap-1 justify-content-end">
                                 <a th:href="@{/gameCharacter/{id}/deassignCampaign(id=${gc.id})}" class="btn btn-text theme-accent" title="Desasignar"><th:block th:replace="~{fragments/icons :: deassign}"></th:block></a>
                                 <a th:href="@{/gameCharacter/{id}/edit(id=${gc.id})}" class="btn btn-text theme-warning" title="Editar"><th:block th:replace="~{fragments/icons :: edit}"></th:block></a>
-                                <a th:href="@{/gameCharacter/{id}/delete(id=${gc.id})}" class="btn btn-text theme-danger" title="Eliminar" onclick="return confirm('¿Eliminar este personaje?')"><th:block th:replace="~{fragments/icons :: delete}"></th:block></a>
+                                <a th:href="@{/gameCharacter/{id}/delete(id=${gc.id}, redirectTo='campaign')}" class="btn btn-text theme-danger" title="Eliminar" onclick="return confirm('¿Eliminar este personaje?')"><th:block th:replace="~{fragments/icons :: delete}"></th:block></a>
                             </div>
                         </td>
                     </tr>
